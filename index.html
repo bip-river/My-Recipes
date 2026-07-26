@@ -127,6 +127,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);
 .r-title{font-family:var(--display);font-weight:700;font-size:38px;line-height:1.03;
   letter-spacing:-.025em;margin:6px 0 8px}
 .r-note{margin:0;font-size:15.5px;color:var(--ink-soft);max-width:56ch}
+.scalenote{font-family:var(--data);font-size:11px;line-height:1.5;color:var(--ink-soft);
+  margin:-10px 0 20px}
 
 /* signature element: spec strip */
 .spec{display:flex;flex-wrap:wrap;border:1px solid var(--rule);border-left:3px solid var(--bran);
@@ -301,6 +303,24 @@ function fmt(qty, unit, mult){
   return {amt:(s+(unit?" "+unit:"")).trim(),none:false};
 }
 
+/* Yield scales when it starts with a number ("12 tortillas" → "24 tortillas").
+   No leading number → returned untouched. No pluralization: "1 loaf" → "2 loaf". */
+function scaleYield(text, mult){
+  if(!text) return text;
+  const m = String(text).match(/^(\s*)(\d+(?:\.\d+)?)(.*)$/s);
+  if(!m) return text;
+  return m[1] + fmt(parseFloat(m[2]), "", mult).amt + m[3];
+}
+
+/* Author opt-in scaling inside free text: {{12}} or {{400:g}}.
+   Untagged text is left exactly as written — use only for true counts and
+   weights, never times, temperatures, or dimensions. */
+function scaleText(text, mult){
+  if(!text) return text;
+  return String(text).replace(/\{\{\s*([\d.]+)\s*(?::\s*([^}]*))?\}\}/g,
+    (_, num, unit) => fmt(parseFloat(num), unit ? unit.trim() : "", mult).amt);
+}
+
 /* Levain is both flour and water. 100 g at 100% hydration = 50 g flour + 50 g water. */
 function doughMath(r){
   let flour=0, water=0, levain=false;
@@ -377,7 +397,7 @@ function renderIndex(cat){
 function sheetHTML(r){
   const m=doughMath(r), ext=extractionLabel(r);
   const spec=[
-    r.yield?["Yield",r.yield]:null,
+    r.yield?["Yield",scaleYield(r.yield,scale)]:null,
     r.activeTime?["Active",r.activeTime]:null,
     r.totalTime?["Total",r.totalTime]:null,
     r.berries&&r.berries.length?["Grain",r.berries.join(", "),true]:null,
@@ -395,6 +415,7 @@ function sheetHTML(r){
     ${spec.length?`<div class="spec">${spec.map(([k,v,g])=>
       `<div class="spec-cell"><span class="spec-k">${k}</span>
        <span class="spec-v${g?" grain":""}">${v}</span></div>`).join("")}</div>`:""}
+    ${scale!==1&&(r.activeTime||r.totalTime)?`<p class="scalenote">Times are for the base batch — they don't scale with quantity.</p>`:""}
     <div class="columns">
       <section><h2 class="sec">Ingredients</h2><ul class="ing">
         ${r.ingredients.map(i=>{const f=fmt(i.qty,i.unit,scale);
@@ -402,7 +423,7 @@ function sheetHTML(r){
           <span class="item">${i.item}${i.note?`<em>${i.note}</em>`:""}</span></li>`;}).join("")}
       </ul></section>
       <section><h2 class="sec">Method</h2>
-        <ol class="steps">${r.steps.map(s=>`<li>${s}</li>`).join("")}</ol></section>
+        <ol class="steps">${r.steps.map(s=>`<li>${scaleText(s,scale)}</li>`).join("")}</ol></section>
     </div>
     ${(r.milling||r.substitute)?`<div class="milling">
       ${r.milling?`<p><strong>Milling</strong>${r.milling}</p>`:""}
@@ -546,7 +567,7 @@ function openCook(r){
   let i=0;
   const el=$("#cook");
   const draw=()=>{
-    el.querySelector(".cook-step").innerHTML=`<b>Step ${i+1}</b>${r.steps[i]}`;
+    el.querySelector(".cook-step").innerHTML=`<b>Step ${i+1}</b>${scaleText(r.steps[i],scale)}`;
     el.querySelector(".cook-count").textContent=`${i+1} / ${r.steps.length}`;
     el.querySelector("#prev").disabled = i===0;
     el.querySelector("#next").disabled = i===r.steps.length-1;
