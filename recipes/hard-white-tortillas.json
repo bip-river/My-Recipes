@@ -1,0 +1,52 @@
+{
+  "id": "hard-white-tortillas",
+  "title": "Hard White Flour Tortillas",
+  "category": "breads",
+  "tested": false,
+  "source": "Seed recipe — replace with yours",
+  "yield": "12 tortillas",
+  "activeTime": "40 min",
+  "totalTime": "1 hr 20 min",
+  "berries": [
+    "hard white"
+  ],
+  "millSetting": "fine",
+  "note": "Hard white gives you the strength of red wheat without the tannic edge, which is exactly what you want in something this plain.",
+  "ingredients": [
+    {
+      "qty": 400,
+      "unit": "g",
+      "item": "hard white wheat berries, milled fine",
+      "role": "flour",
+      "berry": "hard white",
+      "extraction": 100
+    },
+    {
+      "qty": 8,
+      "unit": "g",
+      "item": "fine sea salt"
+    },
+    {
+      "qty": 60,
+      "unit": "g",
+      "item": "lard or softened butter"
+    },
+    {
+      "qty": 250,
+      "unit": "g",
+      "item": "hot water, 120°F",
+      "role": "water"
+    }
+  ],
+  "steps": [
+    "Mix flour and salt. Rub in the fat until it looks like damp sand.",
+    "Add hot water, stir, then knead 5 minutes until smooth and elastic.",
+    "Cover and rest 45 minutes. Skipping this makes them impossible to roll thin.",
+    "Divide into 12 balls, cover, rest another 15 minutes.",
+    "Roll each as thin as you can on a bare counter — flour makes them tough.",
+    "Cook on a dry skillet over medium-high, 45 seconds a side, until puffed with brown freckles.",
+    "Stack in a towel as you go. The steam is what keeps them pliable."
+  ],
+  "milling": "Whole-grain tortillas will never be as stretchy as white-flour ones. Rolling thinner matters more than kneading longer.",
+  "substitute": "All-purpose flour, same weight, and drop the water to 230 g."
+}

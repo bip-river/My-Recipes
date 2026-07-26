@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mill &amp; Table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --paper:#E9E9E0; --paper-lift:#F3F3EC;
+  --ink:#1E2119;   --ink-soft:#5A6052;
+  --rule:#C7C8BA;
+  --stencil:#2E4A6B;   /* grain-sack stencil blue */
+  --bran:#8A5A34;      /* reserved: grain data only */
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"Source Serif 4",Georgia,serif;
+  --data:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--stencil);outline-offset:2px}
+
+/* ============================================================
+   MASTHEAD
+   ============================================================ */
+.masthead{border-bottom:1px solid var(--rule);padding:22px 24px 0;max-width:1100px;margin:0 auto}
+.wordmark{font-family:var(--display);font-weight:700;font-size:15px;
+  letter-spacing:.22em;text-transform:uppercase;margin:0}
+.wordmark span{color:var(--bran)}
+.tagline{font-family:var(--data);font-size:11px;letter-spacing:.06em;
+  color:var(--ink-soft);margin:4px 0 18px}
+.tabs{display:flex;gap:2px;flex-wrap:wrap}
+.tab{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;background:none;border:0;border-bottom:2px solid transparent;
+  color:var(--ink-soft);padding:9px 14px;cursor:pointer}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--stencil)}
+
+/* ============================================================
+   INDEX
+   ============================================================ */
+.sheet{max-width:1100px;margin:0 auto;padding:28px 24px 80px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.card{background:var(--paper-lift);border:0;text-align:left;padding:20px 20px 18px;
+  cursor:pointer;font:inherit;color:inherit;display:flex;flex-direction:column;
+  gap:9px;min-height:158px;transition:background .12s ease}
+.card:hover{background:#fff}
+.card-eyebrow{font-family:var(--data);font-size:10px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-soft);display:flex;justify-content:space-between;gap:10px}
+.card-title{font-family:var(--display);font-weight:600;font-size:21px;
+  line-height:1.15;letter-spacing:-.01em;margin:0}
+.card-grain{font-family:var(--data);font-size:11px;color:var(--bran);
+  letter-spacing:.02em;margin-top:auto}
+.flag{font-family:var(--data);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding:2px 6px;border:1px solid currentColor;white-space:nowrap}
+.flag.untested{color:var(--bran)}
+.flag.tested{color:var(--stencil)}
+
+/* ============================================================
+   STATES
+   ============================================================ */
+.state{font-family:var(--data);font-size:13px;line-height:1.7;color:var(--ink-soft);
+  padding:56px 4px;max-width:62ch}
+.state h2{font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink);margin:0 0 10px}
+.state code{background:var(--paper-lift);border:1px solid var(--rule);padding:1px 5px;font-size:12px}
+.state .bad{color:var(--bran)}
+
+/* ============================================================
+   RECIPE — the print artifact
+   ============================================================ */
+.recipe{max-width:8.5in;margin:0 auto;padding:24px}
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.btn{font-family:var(--display);font-size:11px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;background:none;border:1px solid var(--ink);color:var(--ink);
+  padding:8px 13px;cursor:pointer}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn-print{border-color:var(--stencil);color:var(--stencil)}
+.btn-print:hover{background:var(--stencil);color:var(--paper)}
+.btn[aria-expanded="true"]{background:var(--ink);color:var(--paper)}
+.scaler{display:flex;align-items:center;border:1px solid var(--rule);margin-left:auto}
+.scaler button{font-family:var(--data);font-size:15px;background:none;border:0;
+  color:var(--ink);width:32px;height:32px;cursor:pointer}
+.scaler button:hover{background:var(--rule)}
+.scaler output{font-family:var(--data);font-size:12px;padding:0 12px;min-width:86px;text-align:center}
+
+/* overflow warning */
+.warn{font-family:var(--data);font-size:11px;line-height:1.5;color:var(--bran);
+  border-left:3px solid var(--bran);padding:7px 12px;margin:0 0 18px;background:var(--paper-lift)}
+.warn b{font-weight:600}
+
+/* mill & mix panel */
+.panel{border:1px solid var(--rule);background:var(--paper-lift);
+  padding:18px 20px;margin:0 0 22px;display:grid;gap:22px}
+.panel h3{font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;margin:0 0 10px;color:var(--ink)}
+.panel .hint{font-family:var(--body);font-size:13.5px;color:var(--ink-soft);
+  margin:8px 0 0;max-width:64ch;line-height:1.45}
+.weigh{list-style:none;margin:0;padding:0;font-family:var(--data);font-size:13px}
+.weigh li{display:flex;justify-content:space-between;gap:14px;padding:5px 0;
+  border-bottom:1px dotted var(--rule)}
+.weigh .b{color:var(--bran)}
+.weigh .g{font-weight:600}
+.calc{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.calc label{display:block;font-family:var(--data);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+.calc input,.calc select{font-family:var(--data);font-size:13px;padding:6px 8px;
+  border:1px solid var(--rule);background:#fff;color:var(--ink);width:82px}
+.calc select{width:auto}
+.result{font-family:var(--data);border:1px solid var(--stencil);
+  border-left:4px solid var(--stencil);padding:7px 14px;min-width:132px}
+.result span{display:block;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft)}
+.result strong{display:block;font-size:21px;font-weight:600;color:var(--stencil);margin-top:2px}
+.result.off strong{color:var(--bran)}
+
+.r-head{border-bottom:2px solid var(--ink);padding-bottom:12px}
+.r-cat{font-family:var(--data);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.r-title{font-family:var(--display);font-weight:700;font-size:38px;line-height:1.03;
+  letter-spacing:-.025em;margin:6px 0 8px}
+.r-note{margin:0;font-size:15.5px;color:var(--ink-soft);max-width:56ch}
+
+/* signature element: spec strip */
+.spec{display:flex;flex-wrap:wrap;border:1px solid var(--rule);border-left:3px solid var(--bran);
+  margin:14px 0 22px;background:var(--paper-lift)}
+.spec-cell{padding:8px 16px;border-right:1px solid var(--rule);flex:1 1 auto}
+.spec-cell:last-child{border-right:0}
+.spec-k{display:block;font-family:var(--data);font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.spec-v{display:block;font-family:var(--data);font-size:13px;font-weight:500;margin-top:3px}
+.spec-v.grain{color:var(--bran)}
+
+.columns{display:grid;grid-template-columns:1fr 1.75fr;gap:34px}
+h2.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:.17em;
+  text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:5px;margin:0 0 12px}
+.ing{list-style:none;margin:0;padding:0}
+.ing li{display:flex;gap:9px;padding:5px 0;border-bottom:1px dotted var(--rule);
+  font-size:15px;break-inside:avoid}
+.ing .amt{font-family:var(--data);font-size:13px;font-weight:500;white-space:nowrap;
+  min-width:62px;text-align:right}
+.ing .amt.none{color:var(--ink-soft)}
+.ing .item{flex:1}
+.ing .item em{font-style:normal;color:var(--bran);font-family:var(--data);font-size:11.5px;display:block}
+
+.steps{list-style:none;counter-reset:s;margin:0;padding:0}
+.steps li{counter-increment:s;position:relative;padding:0 0 13px 30px;break-inside:avoid}
+.steps li::before{content:counter(s);position:absolute;left:0;top:2px;
+  font-family:var(--data);font-size:11px;font-weight:600;color:var(--stencil)}
+
+.milling{border-top:1px solid var(--rule);margin-top:26px;padding-top:14px;break-inside:avoid}
+.milling p{margin:0 0 7px;font-size:14.5px;color:var(--ink-soft);max-width:74ch}
+.milling p:last-child{margin-bottom:0}
+.milling strong{font-family:var(--data);font-size:10px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink);display:block}
+.colophon{font-family:var(--data);font-size:10px;letter-spacing:.05em;color:var(--ink-soft);
+  margin-top:20px;padding-top:8px;border-top:1px solid var(--rule);
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* ============================================================
+   KITCHEN MODE
+   ============================================================ */
+.cook{position:fixed;inset:0;background:var(--paper);z-index:50;
+  display:flex;flex-direction:column;padding:20px 24px 24px}
+.cook-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  border-bottom:1px solid var(--rule);padding-bottom:12px}
+.cook-title{font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cook-count{font-family:var(--data);font-size:12px;color:var(--ink-soft);white-space:nowrap}
+.lock{font-family:var(--data);font-size:9px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--stencil);border:1px solid currentColor;padding:2px 6px;white-space:nowrap}
+.lock.no{color:var(--ink-soft)}
+.cook-body{flex:1;overflow-y:auto;display:flex;align-items:center;padding:24px 0}
+.cook-step{font-size:clamp(23px,3.6vw,38px);line-height:1.36;max-width:22ch;margin:0}
+.cook-step b{font-family:var(--data);font-size:.42em;font-weight:600;color:var(--stencil);
+  display:block;margin-bottom:14px;letter-spacing:.1em}
+.cook-ing{border-top:1px solid var(--rule);padding-top:12px;max-height:31vh;overflow-y:auto}
+.cook-ing ul{list-style:none;margin:0;padding:0;font-family:var(--data);
+  font-size:15px;columns:2;column-gap:32px}
+.cook-ing li{padding:4px 0;break-inside:avoid}
+.cook-ing .amt{font-weight:600;color:var(--stencil)}
+.cook-nav{display:flex;gap:10px;border-top:1px solid var(--rule);padding-top:14px}
+.cook-nav .btn{flex:1;padding:16px;font-size:12px}
+.cook-nav .btn:disabled{opacity:.3;cursor:default}
+.cook-nav .btn:disabled:hover{background:none;color:var(--ink)}
+
+@media (max-width:680px){
+  .columns{grid-template-columns:1fr;gap:26px}
+  .r-title{font-size:29px}
+  .scaler{margin-left:0}
+  .cook-ing ul{columns:1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ============================================================
+   OVERFLOW MEASUREMENT
+   Mirrors the print block below at 7.5in width, offscreen.
+   Keep the two in sync if you change print sizes.
+   ============================================================ */
+#measure{position:absolute;left:-99999px;top:0;width:7.5in;visibility:hidden;
+  pointer-events:none;font-size:10.5pt;line-height:1.42}
+#measure .r-title{font-size:25pt}
+#measure .r-note{font-size:9.5pt}
+#measure .spec{margin:9pt 0 13pt}
+#measure .spec-cell{padding:5pt 11pt}
+#measure .spec-k{font-size:6.5pt}
+#measure .spec-v{font-size:9pt}
+#measure .columns{gap:24pt;grid-template-columns:1fr 1.75fr}
+#measure h2.sec{font-size:8pt}
+#measure .ing li{font-size:9.5pt;padding:3pt 0}
+#measure .ing .amt{font-size:8.5pt}
+#measure .steps li{padding-bottom:8pt}
+#measure .milling{margin-top:16pt;padding-top:9pt}
+#measure .milling p{font-size:9pt}
+
+/* ============================================================
+   PRINT — one recipe, one sheet, no flipping
+   ============================================================ */
+@page{size:letter;margin:.5in}
+@media print{
+  :root{--paper:#fff;--paper-lift:#fff}
+  body{background:#fff;font-size:10.5pt;line-height:1.42}
+  .masthead,.toolbar,.panel,.warn,.cook,.no-print,#measure{display:none!important}
+  .recipe{max-width:none;padding:0;margin:0}
+  .r-title{font-size:25pt}
+  .r-note{font-size:9.5pt;color:#000}
+  .spec{background:#fff;border:1px solid #000;border-left:3px solid #000;margin:9pt 0 13pt;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .spec-cell{padding:5pt 11pt;border-right:1px solid #999}
+  .spec-k{font-size:6.5pt}
+  .spec-v{font-size:9pt}
+  .spec-v.grain,.ing .item em,.card-grain{color:#000}
+  .columns{gap:24pt;grid-template-columns:1fr 1.75fr}
+  h2.sec{font-size:8pt;break-after:avoid}
+  .ing li{font-size:9.5pt;padding:3pt 0}
+  .ing .amt{font-size:8.5pt}
+  .steps li{padding-bottom:8pt}
+  .steps li::before{color:#000}
+  .milling{margin-top:16pt;padding-top:9pt}
+  .milling p{font-size:9pt;color:#222}
+  .r-head,.spec,.milling,.colophon{break-inside:avoid}
+  a{text-decoration:none;color:#000}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead no-print">
+  <h1 class="wordmark">Mill <span>&amp;</span> Table</h1>
+  <p class="tagline">FRESH-MILLED · GRAMS FIRST · ONE SHEET PER RECIPE</p>
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+</header>
+
+<main class="sheet" id="index"><p class="state">Loading recipes…</p></main>
+<article class="recipe" id="detail" hidden></article>
+<div id="cook"></div>
+<div id="measure" aria-hidden="true"></div>
+
+<script>
+/* ============================================================
+   DATA — recipes live in /recipes, one JSON each.
+   ============================================================ */
+const MANIFEST = "recipes/index.json";
+const PAGE_PX  = 960;          /* 10in of usable height at 96dpi */
+let RECIPES = [], CATS = ["all"], scale = 1, current = null;
+const $ = s => document.querySelector(s);
+
+async function loadRecipes(){
+  const manifest = await fetch(MANIFEST,{cache:"no-cache"}).then(r=>{
+    if(!r.ok) throw new Error("manifest "+r.status); return r.json();
+  });
+  const out = await Promise.all(manifest.map(async f=>{
+    try{
+      const r = await fetch("recipes/"+f,{cache:"no-cache"});
+      if(!r.ok) throw new Error(r.status);
+      return await r.json();
+    }catch(e){ console.warn("Skipped recipes/"+f+":",e.message); return null; }
+  }));
+  RECIPES = out.filter(Boolean);
+  CATS = ["all", ...[...new Set(RECIPES.map(r=>r.category).filter(Boolean))].sort()];
+}
+
+/* ============================================================
+   MATH
+   ============================================================ */
+function fmt(qty, unit, mult){
+  if(qty == null) return {amt:"",none:true};
+  let n = qty*mult;
+  if(unit==="g"||unit==="ml") n = n>=20 ? Math.round(n) : Math.round(n*10)/10;
+  else n = Math.round(n*100)/100;
+  const frac={0.25:"¼",0.33:"⅓",0.5:"½",0.67:"⅔",0.75:"¾"};
+  const whole=Math.floor(n), rem=Math.round((n-whole)*100)/100;
+  const s = frac[rem] ? (whole?whole+frac[rem]:frac[rem]) : String(n);
+  return {amt:(s+(unit?" "+unit:"")).trim(),none:false};
+}
+
+/* Levain is both flour and water. 100 g at 100% hydration = 50 g flour + 50 g water. */
+function doughMath(r){
+  let flour=0, water=0, levain=false;
+  const berries={};
+  (r.ingredients||[]).forEach(i=>{
+    const q=i.qty||0;
+    if(i.role==="flour"){
+      flour+=q;
+      const name=i.berry || (r.berries&&r.berries[0]) || "wheat berries";
+      const ext=i.extraction||100;
+      berries[name]=(berries[name]||0)+q/(ext/100);   /* sifting means milling more */
+    }else if(i.role==="water"){
+      water+=q;
+    }else if(i.role==="levain"){
+      levain=true;
+      const h=i.levainHydration!=null?i.levainHydration:100;
+      const lf=q/(1+h/100);
+      flour+=lf; water+=q-lf;
+    }
+  });
+  return {flour,water,levain,berries,
+    hydration: flour&&water ? Math.round(water/flour*100) : null,
+    isDough: flour>0 && water>0};
+}
+
+function extractionLabel(r){
+  const e=(r.ingredients||[]).filter(i=>i.role==="flour"&&i.extraction!=null).map(i=>i.extraction);
+  if(!e.length) return null;
+  const min=Math.min(...e);
+  return min>=100 ? "whole" : min+"% sifted";
+}
+
+/* Desired dough temperature. Multiply DDT by the count of temperature
+   variables including the water itself, then subtract the known ones. */
+function waterTemp({ddt,flourT,roomT,levainT,friction,hasLevain}){
+  const known = hasLevain ? flourT+roomT+levainT : flourT+roomT;
+  const n = hasLevain ? 4 : 3;
+  return Math.round(ddt*n - known - friction);
+}
+
+/* ============================================================
+   INDEX
+   ============================================================ */
+function buildTabs(active){
+  $("#tabs").innerHTML = CATS.map(c=>
+    `<button class="tab" role="tab" data-cat="${c}" aria-selected="${c===active}">${c}</button>`).join("");
+}
+
+function renderIndex(cat){
+  scale=1; current=null;
+  $("#detail").hidden=true; $("#index").hidden=false; $(".masthead").hidden=false;
+  $("#cook").innerHTML=""; releaseWake();
+  buildTabs(cat);
+  const list=RECIPES.filter(r=>cat==="all"||r.category===cat);
+  if(!list.length){
+    $("#index").innerHTML=`<div class="state"><h2>Nothing here yet</h2>
+      <p>Drop a <code>.json</code> file into <code>recipes/</code>. If the GitHub Action
+      is running it indexes itself; otherwise add the filename to
+      <code>recipes/index.json</code>.</p></div>`;
+    return;
+  }
+  $("#index").innerHTML=`<div class="grid">`+list.map(r=>`
+    <button class="card" data-id="${r.id}">
+      <span class="card-eyebrow"><span>${r.category||""}</span>
+        <span class="flag ${r.tested?"tested":"untested"}">${r.tested?"tested":"untested"}</span></span>
+      <h2 class="card-title">${r.title}</h2>
+      <span class="card-grain">${r.berries&&r.berries.length?r.berries.join(" · "):"no flour"}</span>
+    </button>`).join("")+`</div>`;
+}
+
+/* ============================================================
+   RECIPE
+   ============================================================ */
+function sheetHTML(r){
+  const m=doughMath(r), ext=extractionLabel(r);
+  const spec=[
+    r.yield?["Yield",r.yield]:null,
+    r.activeTime?["Active",r.activeTime]:null,
+    r.totalTime?["Total",r.totalTime]:null,
+    r.berries&&r.berries.length?["Grain",r.berries.join(", "),true]:null,
+    r.millSetting?["Mill",r.millSetting]:null,
+    ext?["Extraction",ext]:null,
+    m.hydration?["Hydration",m.hydration+"%"]:null
+  ].filter(Boolean);
+
+  return `
+    <div class="r-head">
+      <div class="r-cat">${r.category||""}${r.tested?"":" · untested"}</div>
+      <h1 class="r-title">${r.title}</h1>
+      ${r.note?`<p class="r-note">${r.note}</p>`:""}
+    </div>
+    ${spec.length?`<div class="spec">${spec.map(([k,v,g])=>
+      `<div class="spec-cell"><span class="spec-k">${k}</span>
+       <span class="spec-v${g?" grain":""}">${v}</span></div>`).join("")}</div>`:""}
+    <div class="columns">
+      <section><h2 class="sec">Ingredients</h2><ul class="ing">
+        ${r.ingredients.map(i=>{const f=fmt(i.qty,i.unit,scale);
+          return `<li><span class="amt${f.none?" none":""}">${f.amt||"—"}</span>
+          <span class="item">${i.item}${i.note?`<em>${i.note}</em>`:""}</span></li>`;}).join("")}
+      </ul></section>
+      <section><h2 class="sec">Method</h2>
+        <ol class="steps">${r.steps.map(s=>`<li>${s}</li>`).join("")}</ol></section>
+    </div>
+    ${(r.milling||r.substitute)?`<div class="milling">
+      ${r.milling?`<p><strong>Milling</strong>${r.milling}</p>`:""}
+      ${r.substitute?`<p><strong>Without fresh flour</strong>${r.substitute}</p>`:""}
+    </div>`:""}
+    <div class="colophon"><span>MILL &amp; TABLE</span><span>${r.source||""}</span>
+      <span>${scale!==1?"SCALED "+scale+"×":"BASE BATCH"}</span></div>`;
+}
+
+function panelHTML(r){
+  const m=doughMath(r);
+  const names=Object.keys(m.berries);
+  if(!names.length && !m.isDough) return "";
+
+  const weigh = names.length ? `<div><h3>Grain to weigh</h3><ul class="weigh">
+    ${names.map(n=>`<li><span class="b">${n}</span>
+      <span class="g">${Math.round(m.berries[n]*scale)} g</span></li>`).join("")}
+    </ul><p class="hint">Berry weight, not flour weight — sifted recipes need more in
+    to get the same amount out.</p></div>` : "";
+
+  const calc = m.isDough ? `<div><h3>Water temperature</h3>
+    <div class="calc">
+      <div><label for="ddt">Target dough</label><input type="number" id="ddt" value="78"></div>
+      <div><label for="flourT">Flour</label><input type="number" id="flourT" value="85"></div>
+      <div><label for="roomT">Room</label><input type="number" id="roomT" value="72"></div>
+      ${m.levain?`<div><label for="levainT">Levain</label><input type="number" id="levainT" value="75"></div>`:""}
+      <div><label for="friction">Mixing</label><select id="friction">
+        <option value="2" selected>By hand</option>
+        <option value="12">Dough hook</option>
+        <option value="22">Spiral mixer</option></select></div>
+      <div class="result" id="wt"><span>Use water at</span><strong>—</strong></div>
+    </div>
+    <p class="hint">Fresh-milled flour comes off the stones warm — often 10–15°F above the
+    room. Measure it rather than guessing; it's the variable standard recipes never account for.</p>
+    </div>` : "";
+
+  return `<div class="panel" id="panel" hidden>${weigh}${calc}</div>`;
+}
+
+function renderRecipe(id){
+  const r=RECIPES.find(x=>x.id===id);
+  if(!r) return renderIndex("all");
+  current=r;
+  $("#index").hidden=true; $(".masthead").hidden=true;
+  const d=$("#detail"); d.hidden=false;
+  const m=doughMath(r);
+
+  d.innerHTML=`
+    <div class="toolbar no-print">
+      <button class="btn" id="back">← All</button>
+      <button class="btn btn-print" id="print">Print / PDF</button>
+      <button class="btn" id="cookbtn">Cook</button>
+      ${(Object.keys(m.berries).length||m.isDough)
+        ? `<button class="btn" id="panelbtn" aria-expanded="false">Mill &amp; mix</button>`:""}
+      <div class="scaler">
+        <button id="down" aria-label="Halve batch">−</button>
+        <output>${scale}× batch</output>
+        <button id="up" aria-label="Double batch">+</button>
+      </div>
+    </div>
+    <div id="warnslot"></div>
+    ${panelHTML(r)}
+    ${sheetHTML(r)}`;
+
+  $("#back").onclick=()=>{location.hash="";};
+  $("#print").onclick=()=>window.print();
+  $("#cookbtn").onclick=()=>openCook(r);
+  $("#up").onclick=()=>{scale=Math.min(4,scale*2);renderRecipe(id);};
+  $("#down").onclick=()=>{scale=Math.max(0.5,scale/2);renderRecipe(id);};
+
+  const pb=$("#panelbtn");
+  if(pb) pb.onclick=()=>{
+    const p=$("#panel"), open=p.hidden;
+    p.hidden=!open; pb.setAttribute("aria-expanded",open);
+  };
+  wireCalc(m);
+  checkOverflow(r);
+  window.scrollTo(0,0);
+}
+
+function wireCalc(m){
+  if(!$("#wt")) return;
+  const read=()=>{
+    const v=id=>parseFloat(($("#"+id)||{}).value)||0;
+    const t=waterTemp({ddt:v("ddt"),flourT:v("flourT"),roomT:v("roomT"),
+      levainT:m.levain?v("levainT"):0,friction:v("friction"),hasLevain:m.levain});
+    const box=$("#wt"), bad=t<33||t>140;
+    box.classList.toggle("off",bad);
+    box.querySelector("strong").textContent = bad ? t+"°F ?" : t+"°F";
+    box.querySelector("span").textContent = bad ? "Check your inputs" : "Use water at";
+  };
+  ["ddt","flourT","roomT","levainT","friction"].forEach(id=>{
+    const el=$("#"+id); if(el) el.oninput=read;
+  });
+  read();
+}
+
+/* ============================================================
+   OVERFLOW — does this still fit one sheet?
+   ============================================================ */
+async function checkOverflow(r){
+  if(document.fonts && document.fonts.ready) await document.fonts.ready;
+  const mDiv=$("#measure");
+  mDiv.innerHTML=sheetHTML(r);
+  const h=mDiv.scrollHeight;
+  mDiv.innerHTML="";
+  const slot=$("#warnslot");
+  if(!slot) return;
+  if(h<=PAGE_PX){ slot.innerHTML=""; return; }
+  const sheets=Math.ceil(h/PAGE_PX);
+  const over=Math.round((h/PAGE_PX-1)*100);
+  slot.innerHTML=`<p class="warn"><b>Runs about ${over}% past one sheet</b> — this will
+    print across ${sheets} pages, so you'd have to flip mid-recipe. Trimming the note,
+    the milling paragraph, or a couple of step words usually brings it back.
+    Estimate, not a guarantee: print one to confirm.</p>`;
+}
+
+/* ============================================================
+   KITCHEN MODE
+   ============================================================ */
+let wakeLock=null, cookOpen=false;
+async function acquireWake(){
+  try{
+    if("wakeLock" in navigator){
+      wakeLock=await navigator.wakeLock.request("screen");
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+function releaseWake(){
+  cookOpen=false;
+  if(wakeLock){ try{wakeLock.release();}catch(e){} wakeLock=null; }
+}
+document.addEventListener("visibilitychange",()=>{
+  if(cookOpen && document.visibilityState==="visible" && !wakeLock) acquireWake();
+});
+
+function openCook(r){
+  cookOpen=true;
+  let i=0;
+  const el=$("#cook");
+  const draw=()=>{
+    el.querySelector(".cook-step").innerHTML=`<b>Step ${i+1}</b>${r.steps[i]}`;
+    el.querySelector(".cook-count").textContent=`${i+1} / ${r.steps.length}`;
+    el.querySelector("#prev").disabled = i===0;
+    el.querySelector("#next").disabled = i===r.steps.length-1;
+    el.querySelector(".cook-body").scrollTop=0;
+  };
+  el.innerHTML=`<div class="cook">
+    <div class="cook-bar">
+      <h2 class="cook-title">${r.title}</h2>
+      <span class="lock no" id="lockflag">screen may sleep</span>
+      <span class="cook-count"></span>
+      <button class="btn" id="exit">Done</button>
+    </div>
+    <div class="cook-body"><p class="cook-step"></p></div>
+    <div class="cook-ing"><ul>${r.ingredients.map(x=>{
+      const f=fmt(x.qty,x.unit,scale);
+      return `<li><span class="amt">${f.amt||"—"}</span> ${x.item}</li>`;}).join("")}</ul></div>
+    <div class="cook-nav">
+      <button class="btn" id="prev">← Back</button>
+      <button class="btn" id="next">Next step →</button>
+    </div></div>`;
+
+  el.querySelector("#exit").onclick=()=>{el.innerHTML="";releaseWake();};
+  el.querySelector("#prev").onclick=()=>{if(i>0){i--;draw();}};
+  el.querySelector("#next").onclick=()=>{if(i<r.steps.length-1){i++;draw();}};
+  document.onkeydown=e=>{
+    if(!cookOpen) return;
+    if(e.key==="ArrowRight"&&i<r.steps.length-1){i++;draw();}
+    if(e.key==="ArrowLeft"&&i>0){i--;draw();}
+    if(e.key==="Escape"){el.innerHTML="";releaseWake();}
+  };
+  draw();
+  acquireWake().then(ok=>{
+    const f=el.querySelector("#lockflag");
+    if(f && ok){ f.className="lock"; f.textContent="screen staying on"; }
+  });
+}
+
+/* ============================================================
+   ROUTING
+   ============================================================ */
+function route(){
+  const h=decodeURIComponent(location.hash.slice(1));
+  if(h && RECIPES.some(r=>r.id===h)) renderRecipe(h);
+  else renderIndex(CATS.includes(h)?h:"all");
+}
+document.addEventListener("click",e=>{
+  const card=e.target.closest(".card");
+  if(card){ scale=1; location.hash=card.dataset.id; }
+  const tab=e.target.closest(".tab");
+  if(tab) renderIndex(tab.dataset.cat);
+});
+window.addEventListener("hashchange",route);
+
+loadRecipes().then(route).catch(err=>{
+  const local=location.protocol==="file:";
+  $("#tabs").innerHTML="";
+  $("#index").innerHTML=`<div class="state"><h2 class="bad">Recipes didn't load</h2>
+    ${local?`<p>The browser blocks file reads when a page is opened straight from disk.
+      Serve the folder instead — run <code>python3 -m http.server</code> here and open
+      <code>localhost:8000</code>.</p>`
+     :`<p>Couldn't read <code>${MANIFEST}</code>. Check the file exists beside
+      <code>index.html</code> and holds a JSON array of filenames.</p>`}
+    <p>Details: ${err.message}</p></div>`;
+});
+</script>
+</body>
+</html>
