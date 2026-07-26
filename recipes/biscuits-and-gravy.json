@@ -1,0 +1,41 @@
+{
+  "id": "biscuits-and-gravy",
+  "title": "Drop Biscuits and Sausage Gravy",
+  "category": "breakfast",
+  "tested": false,
+  "source": "Biscuits adapted from America's Test Kitchen drop biscuits; gravy rewritten from their all-purpose gravy as a sausage cream gravy",
+  "yield": "12 biscuits and about 3 cups gravy — 6 servings",
+  "activeTime": "35 min",
+  "totalTime": "50 min",
+  "berries": ["soft white"],
+  "millSetting": "fine — placeholder, not yet dialed in",
+  "note": "Drop biscuits, not rolled — no cutting, no folding, no rest. The melted butter is supposed to seize into clumps in the cold buttermilk; those clumps are 20% water and steam the biscuits upward. Smooth batter makes flat biscuits.",
+  "milling": "Soft white is the berry here — lowest protein, tenderest crumb. Mill both flour weights at once and let the flour come to room temperature before mixing; it leaves the Mockmill warm, and warm flour melts the butter clumps the biscuits depend on. Fresh-milled absorbs liquid slowly, so the batter stiffens as it sits — scoop promptly and keep extra buttermilk within reach. Bran interrupts gluten and browns early: check the biscuits at 11 minutes. In the gravy, whole-grain flour thickens slightly slower per gram and keeps tightening off the heat, so pull it looser than you want it. Store milled flour in the freezer and use within a week.",
+  "substitute": "Store-bought: 283 g unbleached all-purpose flour for the biscuits, 40 g for the gravy. Skip the extra buttermilk allowance — refined flour hits final hydration immediately.",
+  "ingredients": [
+    { "qty": 283, "unit": "g", "item": "fresh-milled soft white flour", "role": "flour", "berry": "soft white", "extraction": 100, "note": "for the biscuits" },
+    { "qty": 8, "unit": "g", "item": "baking powder", "note": "2 tsp" },
+    { "qty": 4, "unit": "g", "item": "sugar", "note": "1 tsp" },
+    { "qty": 4.5, "unit": "g", "item": "fine salt", "note": "¾ tsp table salt" },
+    { "qty": 2.5, "unit": "g", "item": "baking soda", "note": "½ tsp" },
+    { "qty": 240, "unit": "g", "item": "buttermilk, cold", "note": "keep another 30 g on hand" },
+    { "qty": 113, "unit": "g", "item": "unsalted butter, melted and cooled slightly" },
+    { "qty": 28, "unit": "g", "item": "unsalted butter, melted", "note": "for brushing" },
+    { "qty": 450, "unit": "g", "item": "bulk pork breakfast sausage", "note": "sage-forward; casings removed if using links" },
+    { "qty": 45, "unit": "g", "item": "fresh-milled soft white flour", "role": "flour", "berry": "soft white", "extraction": 100, "note": "for the gravy" },
+    { "qty": 720, "unit": "g", "item": "whole milk" },
+    { "qty": 28, "unit": "g", "item": "unsalted butter", "note": "only if the sausage renders less than ~50 g fat" },
+    { "qty": 2, "unit": "g", "item": "black pepper, coarsely ground", "note": "more than seems reasonable" },
+    { "item": "salt, to taste", "note": "the sausage is already salty — taste first" }
+  ],
+  "steps": [
+    "Mill 328 g soft white flour total — 283 g for the biscuits, 45 g for the gravy. Spread it on a sheet pan and let it cool to room temperature. Heat the oven to 475°F with a rack in the middle and line a rimmed baking sheet with parchment.",
+    "Whisk the 283 g flour, baking powder, sugar, salt, and baking soda together in a large bowl.",
+    "Stir the 113 g melted butter into the cold buttermilk until the butter seizes into small clumps. Leave them — do not stir them smooth.",
+    "Fold the buttermilk into the dry ingredients with a spatula and stop the moment the batter pulls away from the bowl. If it's too stiff to release from a scoop, work in buttermilk 10 g at a time.",
+    "Scoop 12 level ¼-cup portions onto the sheet, spaced 1½ inches apart. Bake until the tops are golden and crisp, 11 to 14 minutes. Brush with the remaining 28 g melted butter and cool 5 minutes on a rack.",
+    "While the biscuits bake, brown the sausage in a large skillet over medium-high heat, breaking it into bite-size crumbles, 7 to 8 minutes. Leave the browned bits stuck to the pan.",
+    "You want about 50 g fat in the skillet — pour off any excess or add the 28 g butter to make it up. Reduce to medium, scatter the 45 g flour over the sausage, and cook, stirring constantly, until it smells toasted, about 2 minutes.",
+    "Whisk in the milk in three additions, scraping the fond loose as you go. Simmer, stirring often, until the gravy coats a spoon, 8 to 10 minutes. Pepper heavily, then salt to taste. Split the biscuits and spoon the gravy over."
+  ]
+}
