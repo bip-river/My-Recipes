@@ -75,6 +75,25 @@ Notes:
 - Omit `unit` for countable things (3 garlic cloves).
 - Weights are in grams because fresh-milled flour doesn't measure reliably by volume.
 
+## Scaling the batch
+
+The `−` / `+` buttons scale a recipe from half to 4× the base batch.
+
+- **Ingredients** scale automatically — that's what the weights are for.
+- **`yield`** scales too, as long as it starts with a number: `12 tortillas`
+  becomes `24 tortillas` at 2×. No leading number and it's left alone. There's
+  no pluralization, so `1 loaf` reads `2 loaf` — write yields that survive it.
+- **Times don't scale.** Proofing, resting, and baking are set by chemistry,
+  not batch size, so `activeTime` / `totalTime` stay put and the sheet notes
+  that they're for the base batch.
+- **Method** is left verbatim, because the numbers in a step are a mix of
+  counts that should scale (12 balls → 24) and times, temperatures, and
+  dimensions that must not (`138°F`, `1¼ in`). To scale a specific number in a
+  step, wrap it: `Divide into {{12}} balls`. Add a unit to borrow the same
+  gram/millilitre rounding ingredients use: `Whisk in {{200:g}} water`.
+  Everything you don't wrap prints exactly as written — only tag true counts
+  and weights.
+
 ## In the kitchen
 
 **Cook** opens one step at a time in large type and asks the browser to keep the
